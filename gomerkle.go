@@ -25,13 +25,9 @@ func BuildTree(hashes []string) MerkleTree {
 
 	var layerNum int64 = 0
 	tree.layers[layerNum] = tree.buildZeroLayer(hashes)
-	if len(tree.layers[layerNum]) == 1 {
-		return tree
-	}
 
-	nodes := tree.layers[layerNum]
-	for len(nodes) > 1 {
-		nodes = tree.buildLayer(nodes)
+	for len(tree.layers[layerNum]) > 1 {
+		nodes := tree.buildLayer(tree.layers[layerNum])
 		layerNum++
 		tree.layers[layerNum] = nodes
 	}
@@ -98,9 +94,8 @@ func (t *merkleTree) Proof(hash string, layerNum int64) bool {
 		var layerNum int64 = 0
 		tree := &merkleTree{layers: map[int64][]node{layerNum: nodes}}
 
-		nodes := tree.layers[layerNum]
-		for len(nodes) > 1 {
-			nodes = tree.buildLayer(tree.layers[layerNum])
+		for len(tree.layers[layerNum]) > 1 {
+			nodes := tree.buildLayer(tree.layers[layerNum])
 			layerNum++
 			tree.layers[layerNum] = nodes
 		}
